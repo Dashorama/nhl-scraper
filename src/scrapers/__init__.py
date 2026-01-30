@@ -2,5 +2,14 @@
 
 from .base import BaseScraper
 from .nhl_api import NHLAPIScraper
+from .nhl_roster import NHLRosterScraper
+from .moneypuck import MoneyPuckScraper
+from .puckpedia import PuckPediaScraper
 
-__all__ = ["BaseScraper", "NHLAPIScraper"]
+__all__ = [
+    "BaseScraper",
+    "NHLAPIScraper",
+    "NHLRosterScraper",
+    "MoneyPuckScraper",
+    "PuckPediaScraper",
+]

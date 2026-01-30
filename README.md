@@ -4,7 +4,8 @@ A comprehensive NHL data scraper that collects analytics from multiple sources f
 
 ## Features
 
-- **Multiple Data Sources**: NHL API, Hockey Reference, Natural Stat Trick, MoneyPuck, Elite Prospects
+- **Multiple Data Sources**: NHL API, MoneyPuck, PuckPedia
+- **Complete Data Coverage**: Rosters, stats, contracts, advanced analytics
 - **Async & Rate-Limited**: Polite scraping with configurable rate limits
 - **SQLite Storage**: Local database with easy export options
 - **Rich CLI**: Beautiful terminal interface with progress tracking
@@ -13,17 +14,19 @@ A comprehensive NHL data scraper that collects analytics from multiple sources f
 ## Quick Start
 
 ```bash
-# Install dependencies
+# Create venv and install
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -e .
-
-# Or with uv (recommended)
-uv pip install -e .
 
 # Show current standings
 nhl-scraper standings
 
-# Scrape all data
-nhl-scraper scrape-all
+# Show team roster
+nhl-scraper show-roster TOR
+
+# Scrape all data from all sources
+nhl-scraper scrape-full
 
 # Check database stats
 nhl-scraper stats
@@ -31,41 +34,85 @@ nhl-scraper stats
 
 ## CLI Commands
 
+### Basic Scraping
 ```bash
-nhl-scraper --help              # Show all commands
-nhl-scraper standings           # Current NHL standings
-nhl-scraper scrape-teams        # Fetch team data
-nhl-scraper scrape-players      # Fetch player stats
-nhl-scraper scrape-games        # Fetch game schedule
-nhl-scraper scrape-all          # Run all scrapers
-nhl-scraper stats               # Database statistics
+nhl-scraper scrape-teams           # Fetch team data from NHL API
+nhl-scraper scrape-players         # Fetch player stats from NHL API
+nhl-scraper scrape-games           # Fetch game schedule
+nhl-scraper scrape-all             # Run all NHL API scrapers
+```
+
+### Extended Scraping
+```bash
+nhl-scraper scrape-rosters [--team TOR]    # Full rosters from NHL API
+nhl-scraper scrape-advanced [--season 2024] # Advanced stats from MoneyPuck
+nhl-scraper scrape-contracts [--team TOR]   # Contract data from PuckPedia
+nhl-scraper scrape-full                     # ALL data from ALL sources
+```
+
+### Display Commands
+```bash
+nhl-scraper standings              # Current NHL standings
+nhl-scraper show-roster TOR        # Display team roster table
+nhl-scraper show-player 8478402    # Player details by ID
+nhl-scraper stats                  # Database statistics
 ```
 
 ## Data Sources
 
 | Source | Data | Rate Limit |
 |--------|------|------------|
-| NHL API | Official stats, schedules, rosters | 1 req/sec |
-| Hockey Reference | Historical stats, advanced metrics | 1 req/3sec |
-| Natural Stat Trick | Corsi, Fenwick, xG, zone data | 1 req/5sec |
-| MoneyPuck | Expected goals models, predictions | 1 req/2sec |
-| Elite Prospects | Prospects, draft, international | 1 req/5sec |
+| NHL API | Official stats, schedules, rosters | 1-2 req/sec |
+| MoneyPuck | Corsi, Fenwick, xG, zone starts, high-danger | 0.5 req/sec |
+| PuckPedia | Contracts, cap hits, UFA/RFA status, clauses | 0.3 req/sec |
 
 ## Project Structure
 
 ```
 nhl-scraper/
 ├── src/
-│   ├── scrapers/       # Data source modules
-│   │   ├── base.py     # Abstract base with rate limiting
-│   │   └── nhl_api.py  # Official NHL API
-│   ├── models/         # Pydantic data models
-│   ├── storage/        # SQLite database
-│   └── cli.py          # Command-line interface
-├── data/               # SQLite database (created on first run)
-├── docs/               # Architecture documentation
-└── tests/              # Test suite
+│   ├── scrapers/           # Data source modules
+│   │   ├── base.py         # Abstract base with rate limiting
+│   │   ├── nhl_api.py      # Official NHL API (basic)
+│   │   ├── nhl_roster.py   # NHL API (full rosters, player details)
+│   │   ├── moneypuck.py    # MoneyPuck advanced stats (CSV)
+│   │   └── puckpedia.py    # PuckPedia contracts (HTML scraping)
+│   ├── models/             # Pydantic data models
+│   │   ├── player.py       # Player, PlayerStats, GoalieStats
+│   │   ├── team.py         # Team, TeamStandings
+│   │   ├── game.py         # Game, GameStats
+│   │   ├── contract.py     # PlayerContract, ContractClause
+│   │   ├── roster.py       # RosterPlayer, TeamRoster
+│   │   └── advanced_stats.py # AdvancedSkaterStats, AdvancedGoalieStats
+│   ├── storage/            # SQLite database
+│   │   └── database.py     # 6 tables: players, teams, games, contracts, advanced_stats, rosters
+│   └── cli.py              # Command-line interface
+├── data/                   # SQLite database (created on first run)
+├── docs/                   # Architecture documentation
+│   └── EXPANSION_DESIGN.md # Design doc for expanded features
+└── tests/                  # Test suite
 ```
+
+## Data Models
+
+### Core Entities
+- **Player**: Bio, position, draft info, current team
+- **Team**: Name, division, conference, venue
+- **Game**: Schedule, scores, venue, attendance
+
+### Rosters
+- **RosterPlayer**: Full roster entry with position, jersey, bio
+- **TeamRoster**: Complete team roster grouped by position
+
+### Contracts
+- **PlayerContract**: Salary, cap hit, term, UFA/RFA status
+- **ContractClause**: NMC/NTC details
+
+### Stats
+- **PlayerStats**: Goals, assists, +/-, TOI, basic metrics
+- **GoalieStats**: Wins, GAA, save %, starts
+- **AdvancedSkaterStats**: Corsi, Fenwick, xG, zone starts, high-danger, PDO
+- **AdvancedGoalieStats**: GSAE, save % by danger level, rebounds
 
 ## Development
 
@@ -74,7 +121,7 @@ nhl-scraper/
 pip install -e ".[dev]"
 
 # Run tests
-pytest
+pytest tests/ -v
 
 # Type checking
 mypy src
@@ -83,17 +130,39 @@ mypy src
 ruff check src
 ```
 
-## Data Model
+## Example Usage
 
-### Core Entities
-- **Player**: Bio, position, draft info, current team
-- **Team**: Name, division, conference, venue
-- **Game**: Schedule, scores, venue, attendance
+```python
+import asyncio
+from src.scrapers import NHLRosterScraper, MoneyPuckScraper
 
-### Stats
-- **PlayerStats**: Goals, assists, +/-, TOI, advanced metrics
-- **GoalieStats**: Wins, GAA, save %, GSAE
-- **TeamStats**: Standings, PP%, PK%, possession metrics
+async def main():
+    # Get full roster for a team
+    async with NHLRosterScraper() as scraper:
+        roster = await scraper.scrape_roster("TOR")
+        for player in roster["forwards"]:
+            print(f"{player['jersey_number']} - {player['first_name']} {player['last_name']}")
+    
+    # Get advanced stats
+    async with MoneyPuckScraper() as scraper:
+        stats = await scraper.scrape_skater_stats("2024")
+        # Find top Corsi players
+        top_corsi = sorted(stats, key=lambda x: x.get("corsi_pct") or 0, reverse=True)[:10]
+
+asyncio.run(main())
+```
+
+## Database Schema
+
+```sql
+-- 6 tables with full indexing
+players (id, first_name, last_name, position, team, ...)
+teams (abbrev, name, conference, division, ...)
+games (id, season, date, home_team, away_team, scores, ...)
+contracts (player_name, team, cap_hit, aav, years, expiry_status, ...)
+advanced_stats (player_id, season, corsi_*, fenwick_*, xg_*, ...)
+rosters (team, player_id, season, jersey_number, position, status, ...)
+```
 
 ## License
 

@@ -1,7 +1,12 @@
 """Tests for scraper modules."""
 
 import pytest
-from src.scrapers import NHLAPIScraper
+from src.scrapers import (
+    NHLAPIScraper,
+    NHLRosterScraper,
+    MoneyPuckScraper,
+    PuckPediaScraper,
+)
 
 
 @pytest.mark.asyncio
@@ -11,6 +16,32 @@ async def test_nhl_api_scraper_init():
     assert scraper.SOURCE_NAME == "nhl_api"
     assert scraper.BASE_URL == "https://api-web.nhle.com/v1"
     assert scraper.REQUESTS_PER_SECOND == 1.0
+
+
+@pytest.mark.asyncio
+async def test_nhl_roster_scraper_init():
+    """Test NHL Roster scraper initialization."""
+    scraper = NHLRosterScraper()
+    assert scraper.SOURCE_NAME == "nhl_roster"
+    assert scraper.BASE_URL == "https://api-web.nhle.com/v1"
+
+
+@pytest.mark.asyncio
+async def test_moneypuck_scraper_init():
+    """Test MoneyPuck scraper initialization."""
+    scraper = MoneyPuckScraper()
+    assert scraper.SOURCE_NAME == "moneypuck"
+    assert scraper.BASE_URL == "https://moneypuck.com"
+    assert scraper.REQUESTS_PER_SECOND == 0.5  # Conservative
+
+
+@pytest.mark.asyncio
+async def test_puckpedia_scraper_init():
+    """Test PuckPedia scraper initialization."""
+    scraper = PuckPediaScraper()
+    assert scraper.SOURCE_NAME == "puckpedia"
+    assert scraper.BASE_URL == "https://puckpedia.com"
+    assert scraper.REQUESTS_PER_SECOND == 0.3  # Very conservative
 
 
 @pytest.mark.asyncio
