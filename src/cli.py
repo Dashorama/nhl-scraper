@@ -19,7 +19,7 @@ console = Console()
 @click.option("--json-logs", is_flag=True, help="Output logs as JSON")
 @click.pass_context
 def main(ctx: click.Context, verbose: bool, json_logs: bool) -> None:
-    """NHL Analytics Scraper - Collect hockey data from multiple sources."""
+    """NHL Stats - Collect hockey data from multiple sources."""
     ctx.ensure_object(dict)
     setup_logging(level="DEBUG" if verbose else "INFO", json_output=json_logs)
     ctx.obj["db"] = Database()

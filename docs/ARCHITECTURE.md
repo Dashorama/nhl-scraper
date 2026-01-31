@@ -116,7 +116,7 @@ Contract
 ## Architecture
 
 ```
-nhl-scraper/
+nhl-stats/
 ├── src/
 │   ├── __init__.py
 │   ├── scrapers/           # One module per source

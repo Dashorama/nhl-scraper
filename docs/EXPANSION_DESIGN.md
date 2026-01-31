@@ -397,25 +397,25 @@ CSV download and parsing:
 ## CLI Commands
 
 ```
-nhl-scraper scrape-rosters [--team ABBREV]
+nhl-stats scrape-rosters [--team ABBREV]
     Scrape full rosters from NHL API for all or specific team
 
-nhl-scraper scrape-contracts [--team ABBREV]
+nhl-stats scrape-contracts [--team ABBREV]
     Scrape contract data from PuckPedia
 
-nhl-scraper scrape-advanced [--season SEASON]
+nhl-stats scrape-advanced [--season SEASON]
     Download and parse MoneyPuck advanced stats
 
-nhl-scraper scrape-all [--season SEASON]
+nhl-stats scrape-all [--season SEASON]
     Run all scrapers in sequence
 
-nhl-scraper show-roster TEAM
+nhl-stats show-roster TEAM
     Display team roster in formatted table
 
-nhl-scraper show-contracts TEAM
+nhl-stats show-contracts TEAM
     Display team contracts and cap situation
 
-nhl-scraper show-player PLAYER_ID
+nhl-stats show-player PLAYER_ID
     Show all data for a player (stats, contract, advanced)
 ```
 

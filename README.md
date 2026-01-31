@@ -1,6 +1,6 @@
-# NHL Analytics Scraper
+# NHL Stats
 
-A comprehensive NHL data scraper that collects analytics from multiple sources for analysis, visualization, and machine learning applications.
+A comprehensive NHL statistics and analytics tool that collects data from multiple sources for analysis, visualization, and machine learning applications.
 
 ## Features
 
@@ -20,42 +20,42 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -e .
 
 # Show current standings
-nhl-scraper standings
+nhl-stats standings
 
 # Show team roster
-nhl-scraper show-roster TOR
+nhl-stats show-roster TOR
 
 # Scrape all data from all sources
-nhl-scraper scrape-full
+nhl-stats scrape-full
 
 # Check database stats
-nhl-scraper stats
+nhl-stats stats
 ```
 
 ## CLI Commands
 
 ### Basic Scraping
 ```bash
-nhl-scraper scrape-teams           # Fetch team data from NHL API
-nhl-scraper scrape-players         # Fetch player stats from NHL API
-nhl-scraper scrape-games           # Fetch game schedule
-nhl-scraper scrape-all             # Run all NHL API scrapers
+nhl-stats scrape-teams           # Fetch team data from NHL API
+nhl-stats scrape-players         # Fetch player stats from NHL API
+nhl-stats scrape-games           # Fetch game schedule
+nhl-stats scrape-all             # Run all NHL API scrapers
 ```
 
 ### Extended Scraping
 ```bash
-nhl-scraper scrape-rosters [--team TOR]    # Full rosters from NHL API
-nhl-scraper scrape-advanced [--season 2024] # Advanced stats from MoneyPuck
-nhl-scraper scrape-contracts [--team TOR]   # Contract data from PuckPedia
-nhl-scraper scrape-full                     # ALL data from ALL sources
+nhl-stats scrape-rosters [--team TOR]    # Full rosters from NHL API
+nhl-stats scrape-advanced [--season 2024] # Advanced stats from MoneyPuck
+nhl-stats scrape-contracts [--team TOR]   # Contract data from PuckPedia
+nhl-stats scrape-full                     # ALL data from ALL sources
 ```
 
 ### Display Commands
 ```bash
-nhl-scraper standings              # Current NHL standings
-nhl-scraper show-roster TOR        # Display team roster table
-nhl-scraper show-player 8478402    # Player details by ID
-nhl-scraper stats                  # Database statistics
+nhl-stats standings              # Current NHL standings
+nhl-stats show-roster TOR        # Display team roster table
+nhl-stats show-player 8478402    # Player details by ID
+nhl-stats stats                  # Database statistics
 ```
 
 ## Data Sources
@@ -69,7 +69,7 @@ nhl-scraper stats                  # Database statistics
 ## Project Structure
 
 ```
-nhl-scraper/
+nhl-stats/
 ├── src/
 │   ├── scrapers/           # Data source modules
 │   │   ├── base.py         # Abstract base with rate limiting

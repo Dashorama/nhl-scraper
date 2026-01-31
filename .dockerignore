@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Project specific
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# CI/CD
+.github/
+
+# Docs (not needed in image)
+docs/
+*.md
+!README.md
+
+# Dev tools
+.ruff_cache/
+.mypy_cache/
+
+# Local config
+.env
+.env.*
+*.local.*
+
+# Beads/Claude
+.beads/
+.claude/

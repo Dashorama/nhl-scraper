@@ -1,0 +1,55 @@
+# NHL Stats - Docker Compose
+# 
+# Usage:
+#   docker compose build                  # Build image
+#   docker compose run --rm stats --help  # Show CLI help
+#   docker compose run --rm stats scrape --source nhl-api
+#   docker compose run --rm stats scrape --all
+#
+# Development:
+#   docker compose run --rm stats bash    # Interactive shell
+
+services:
+  stats:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nhl-stats:latest
+    volumes:
+      # Persist scraped data
+      - ./data:/app/data
+      # HTTP response cache
+      - scraper-cache:/app/cache
+    environment:
+      - NHL_STATS_DB=sqlite:///data/nhl.db
+      - NHL_STATS_LOG_LEVEL=INFO
+      # Uncomment for PostgreSQL:
+      # - NHL_STATS_DB=postgresql://user:pass@db:5432/nhl
+    # Override entrypoint for interactive use:
+    # entrypoint: ["/bin/bash"]
+    # stdin_open: true
+    # tty: true
+
+  # Optional: PostgreSQL for production
+  # Uncomment to use:
+  # db:
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: nhl
+  #     POSTGRES_PASSWORD: changeme
+  #     POSTGRES_DB: nhl
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U nhl"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+volumes:
+  stats-cache:
+    driver: local
+  # postgres-data:
+  #   driver: local
